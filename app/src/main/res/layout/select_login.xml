@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFF"
+    android:orientation="vertical"
+    tools:context="com.example.android.schoolbustracker.SelectLogin">
+
+    <TextView
+        android:id="@+id/logintext"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_height="90dp"
+        android:background="#FFFF"
+        android:fontFamily="serif-monospace"
+        android:gravity="center"
+        android:text="select login"
+        android:textAllCaps="true"
+        android:textColor="#212121"
+        android:textSize="25dp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/busLogo"
+        android:layout_width="130dp"
+        android:layout_height="90dp"
+        android:src="@drawable/buss" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/logintext"
+        android:layout_margin="45dp"
+        android:background="@drawable/shadow"
+        android:elevation="4dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:elevation="8dp"
+            android:background="@drawable/selectlogin"
+            android:text="parent" />
+
+        <Button
+            android:id="@+id/driver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:elevation="8dp"
+            android:background="@drawable/selectlogin"
+            android:text="bus driver" />
+
+    </LinearLayout>
+
+</RelativeLayout>

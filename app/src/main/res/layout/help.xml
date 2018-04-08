@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFF"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.android.schoolbustracker.Help">
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="#80CBC4"
+        android:elevation="4dp"
+        android:fontFamily="serif-monospace"
+        android:gravity="center"
+        android:text="bus tracking system"
+        android:textAllCaps="true"
+        android:textColor="#212121"
+        android:textSize="25dp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/pic"
+        android:layout_below="@id/text"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/buss"/>
+    <TextView
+        android:id="@+id/logotext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_below="@id/pic"
+        android:text="Bus Tracking System"
+        android:textStyle="bold"
+        android:textColor="#121212"/>
+
+    <TextView
+        android:id="@+id/description1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/logotext"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="8dp"
+        android:text="PARENT: Go to Select Login. Enter credentials and login.Track the school bus in which your ward(s) is/are travelling. "
+        android:textSize="18dp"
+        android:textStyle="italic" />
+    <TextView
+        android:id="@+id/description2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/description1"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="8dp"
+        android:text="BUS DRIVER: Go to Select Login. Enter details and login. Keep logged in throught out the whole trip which will send the bus location and help parents to track bus. After completing trip log out."
+        android:textSize="18dp"
+        android:textStyle="italic" />
+</RelativeLayout>

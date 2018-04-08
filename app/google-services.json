@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "984826177733",
+    "firebase_url": "https://schoolbustracker2-6e009.firebaseio.com",
+    "project_id": "schoolbustracker2-6e009",
+    "storage_bucket": "schoolbustracker2-6e009.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:984826177733:android:1a35963f53ee64ca",
+        "android_client_info": {
+          "package_name": "com.example.android.schoolbustracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "984826177733-qpinuagrp7b3l9vend6hm7g375hbargp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.android.schoolbustracker",
+            "certificate_hash": "7eb02fff601f4b3d24779a60dd7afed518b49046"
+          }
+        },
+        {
+          "client_id": "984826177733-g4alun3hn36djq0o2h2jhh3sr3hae29j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApBugDE1lxZxrd2ux7YoCDF1bDFy2Iou0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "984826177733-g4alun3hn36djq0o2h2jhh3sr3hae29j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
