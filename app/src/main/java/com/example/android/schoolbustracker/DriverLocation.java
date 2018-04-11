@@ -19,10 +19,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by ishikasaini on 07/04/18.
@@ -53,6 +57,8 @@ public class DriverLocation extends AppCompatActivity {
         dLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                locationManager.removeUpdates(locationListener);
+                locationManager = null;
                 Intent intent = new Intent(DriverLocation.this, DriverLogin.class);
                 startActivity(intent);
                 finish();
@@ -64,6 +70,32 @@ public class DriverLocation extends AppCompatActivity {
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference();
+
+        //this code won't execute if the permissions are not granted
+        bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("Location","In 7") ;
+
+                if (ActivityCompat.checkSelfPermission(DriverLocation.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(DriverLocation.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                        0, 0, locationListener);
+
+            }
+        });
+
         locationListener = new LocationListener() {
 
             @Override
@@ -73,12 +105,12 @@ public class DriverLocation extends AppCompatActivity {
                 latTextView.setText(location.getLatitude() + "");
                 longTextView.setText(location.getLongitude() + "");
 
-                Lat_Long pos = new Lat_Long();
-                pos.getCoordinates(location.getLatitude(), location.getLongitude());
+                Lat_Long pos = new Lat_Long(location.getLatitude(), location.getLongitude());
+                myRef.child("Location").setValue(pos);
 
-                database = FirebaseDatabase.getInstance();
-                myRef = database.getReference("Location");
-                myRef.setValue(pos);
+                Toast toast = Toast.makeText(getApplicationContext(), "Location sent.", Toast.LENGTH_SHORT);
+                toast.show();
+                return;
 
 
             }
@@ -105,6 +137,7 @@ public class DriverLocation extends AppCompatActivity {
         };
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Log.i("Location","In 6") ;
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{
                         Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -114,7 +147,6 @@ public class DriverLocation extends AppCompatActivity {
         } else {
             Log.i("Location","In 5") ;
 
-            configureButton();
         }
 
     }
@@ -122,42 +154,15 @@ public class DriverLocation extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.i("Location","In 7") ;
         switch (requestCode) {
             case 10:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    configureButton();
-                return;
+                    return;
         }
     }
 
-    private void configureButton() {
-
-        //first check the permissions
-        Log.i("Location","In 6") ;
 
 
 
-        //this code won't execute if the permissions are not granted
-        bt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i("Location","In 7") ;
-
-                if (ActivityCompat.checkSelfPermission(DriverLocation.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(DriverLocation.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 0, locationListener);
-
-            }
-        });
-
-
-    }
 }

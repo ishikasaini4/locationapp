@@ -8,11 +8,13 @@ import android.support.v7.app.AppCompatActivity;
  */
 
 public  class Lat_Long {
-    double Latitude;
-    double Longitude;
+   public double Latitude;
+   public double Longitude;
 
-     void getCoordinates(double x, double y){
-        Latitude = x;
-        Longitude = y;
+      Lat_Long(double x, double y){
+        this.Latitude = x;
+       this.Longitude = y;
     }
+
+
 }

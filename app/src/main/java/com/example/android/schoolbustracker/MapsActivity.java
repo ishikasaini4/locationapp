@@ -3,6 +3,8 @@ package com.example.android.schoolbustracker;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -12,6 +14,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.android.schoolbustracker.R;
@@ -30,8 +33,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.UiSettings;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 import java.util.Map;
@@ -46,9 +53,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     SupportMapFragment mapFrag;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
+    DatabaseReference myRef;
+    FirebaseDatabase database;
     Location mLastLocation;
     Marker mCurrLocationMarker;
     boolean isFirstTime = true;
+    private static final String TAG = "Maps";
+    int height = 75;
+    int width = 75;
+    Bitmap smallMarker;
 
 
 
@@ -85,13 +98,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap)
     {
+        Log.i("Location","In 1") ;
         mMap=googleMap;
-        // mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-
-        //mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        // mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-        // mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+
 
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -99,8 +109,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 //Location Permission already granted
-                buildGoogleApiClient();
-                mMap.setMyLocationEnabled(true);
+                    buildGoogleApiClient();
+                    mMap.setMyLocationEnabled(true);
             } else {
                 //Request Location Permission
                 checkLocationPermission();
@@ -110,9 +120,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
         }
+
+
     }
 
+
+
     protected synchronized void buildGoogleApiClient() {
+        Log.i("Location","In 6") ;
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -123,6 +138,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onConnected(Bundle bundle) {
+        Log.i("Location","In 2") ;
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setInterval(1000);
         mLocationRequest.setFastestInterval(1000);
@@ -133,6 +149,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             LocationServices.FusedLocationApi.requestLocationUpdates
                     (mGoogleApiClient, mLocationRequest,  this);
         }
+
+
+
     }
 
     @Override
@@ -143,6 +162,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onLocationChanged(Location location) {
+        Log.i("Location","In 3") ;
         mLastLocation = location;
         if (mCurrLocationMarker != null) {
             mCurrLocationMarker.remove();
@@ -153,14 +173,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("YOU");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
         mCurrLocationMarker = mMap.addMarker(markerOptions);
 
-        mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(28.7071, 77.1304))
-                .title("SCHOOL"));
 
-        UiSettings mUiSettings = mMap.getUiSettings();
+        //UiSettings mUiSettings = mMap.getUiSettings();
         //mUiSettings.setZoomControlsEnabled(true);
         //mUiSettings.setZoomGesturesEnabled(true);
 
@@ -177,13 +194,53 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
 
 
+        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.free_4_blue);
+        Bitmap b=bitmapdraw.getBitmap();
+         smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+
+        // Read from the database
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference();
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                //Method 1
+                DataSnapshot loc = dataSnapshot.child("Location");
+                Log.i("RESPONSE","location taken");
+                String lat = loc.child("Latitude").getValue().toString();
+                String lon = loc.child("Longitude").getValue().toString();
+                Log.i("RESPONSE", "Lat = " + lat + " Lon = " + lon);
+
+                LatLng latLng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
+                MarkerOptions marker = new MarkerOptions();
+                marker.position(latLng);
+                marker.title("SCHOOL BUS");
+                //marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+
+                marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.free_4_blue));
+                marker.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+                mMap.addMarker(marker);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                throw databaseError.toException();
+
+            }
+        });
 
     }
 
 
 
+
+
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private void checkLocationPermission() {
+        Log.i("Location","In 4") ;
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
@@ -222,6 +279,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
+        Log.i("Location","In 5") ;
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
