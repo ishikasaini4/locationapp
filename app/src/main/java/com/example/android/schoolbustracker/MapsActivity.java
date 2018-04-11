@@ -62,6 +62,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     int height = 75;
     int width = 75;
     Bitmap smallMarker;
+    Marker marker;
 
 
 
@@ -170,7 +171,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
+        final MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("YOU");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
@@ -191,9 +192,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             mMap.animateCamera(zoom);
             isFirstTime = false;
         }
-        // mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
 
-
+        //marker
         BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.free_4_blue);
         Bitmap b=bitmapdraw.getBitmap();
          smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
@@ -201,27 +201,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Read from the database
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
+
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-
+                if (marker != null) {
+                    marker.remove();
+                }
                 //Method 1
                 DataSnapshot loc = dataSnapshot.child("Location");
                 Log.i("RESPONSE","location taken");
                 String lat = loc.child("Latitude").getValue().toString();
                 String lon = loc.child("Longitude").getValue().toString();
                 Log.i("RESPONSE", "Lat = " + lat + " Lon = " + lon);
+                final MarkerOptions markerOptions  = new MarkerOptions();
+                LatLng di = new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
+                markerOptions.position(di).title("SCHOOL BUS");
 
-                LatLng latLng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
-                MarkerOptions marker = new MarkerOptions();
-                marker.position(latLng);
-                marker.title("SCHOOL BUS");
-                //marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.free_4_blue));
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+                marker = mMap.addMarker(markerOptions);
 
-                marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.free_4_blue));
-                marker.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
-                mMap.addMarker(marker);
 
             }
 
